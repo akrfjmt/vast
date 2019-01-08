@@ -16,6 +16,26 @@ type VAST struct {
 	// Contains a URI to a tracking resource that the video player should request
 	// upon receiving a “no ad” response
 	Errors []CDATAString `xml:"Error,omitempty"`
+	// Comment
+	Comment string `xml:",comment"`
+}
+
+// MarshalXML marshals VAST
+func (v VAST) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	vv := struct {
+		Version string `xml:"version,attr"`
+		Ads []Ad
+		Errors []CDATAString `xml:"Error,omitempty"`
+		Comment string `xml:",comment"`
+		Xmlns string `xml:"xmlns"`
+	}{
+		v.Version,
+		v.Ads,
+		v.Errors,
+		v.Comment,
+		"http://www.iab.com/VAST",
+	}
+	return e.EncodeElement(vv, start)
 }
 
 // Ad represent an <Ad> child tag in a VAST document

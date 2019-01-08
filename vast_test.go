@@ -637,3 +637,18 @@ func TestUniversalAdID(t *testing.T) {
 		}
 	}
 }
+
+func TestVAST_MarshalXML(t *testing.T) {
+	v := VAST{
+		Version: "3",
+		Ads:     []Ad{{ID: "id"}},
+		Errors:  []CDATAString{{"error"}},
+		Comment: "comment",
+	}
+
+	buf, _ := xml.MarshalIndent(v, "", "")
+	assert.Equal(t, "<VAST version=\"3\"><Ads id=\"id\"></Ads><Error><![CDATA[error]]></Error><!--comment--><xmlns>http://www.iab.com/VAST</xmlns></VAST>", string(buf))
+
+	buf2, _ := xml.MarshalIndent(VAST{}, "", "")
+	assert.Equal(t, "<VAST version=\"\"><xmlns>http://www.iab.com/VAST</xmlns></VAST>", string(buf2))
+}
